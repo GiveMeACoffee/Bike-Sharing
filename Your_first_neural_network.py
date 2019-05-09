@@ -70,7 +70,7 @@ data.head()
 # 
 # 我们会保存换算因子，以便当我们使用网络进行预测时可以还原数据。
 
-# In[8]:
+# In[7]:
 
 
 quant_features = ['casual', 'registered', 'cnt', 'temp', 'hum', 'windspeed']
@@ -86,7 +86,7 @@ for each in quant_features:
 # 
 # 我们将大约最后 21 天的数据保存为测试数据集，这些数据集会在训练完网络后使用。我们将使用该数据集进行预测，并与实际的骑行人数进行对比。
 
-# In[10]:
+# In[8]:
 
 
 # Save data for approximately the last 21 days 
@@ -103,7 +103,7 @@ test_features, test_targets = test_data.drop(target_fields, axis=1), test_data[t
 
 # 我们将数据拆分为两个数据集，一个用作训练，一个在网络训练完后用来验证网络。因为数据是有时间序列特性的，所以我们用历史数据进行训练，然后尝试预测未来数据（验证数据集）。
 
-# In[11]:
+# In[9]:
 
 
 # Hold out the last 60 days or so of the remaining data as a validation set
@@ -133,7 +133,7 @@ val_features, val_targets = features[-60*24:], targets[-60*24:]
 # 
 #   
 
-# In[19]:
+# In[10]:
 
 
 class NeuralNetwork(object):
@@ -232,7 +232,7 @@ class NeuralNetwork(object):
         return final_outputs
 
 
-# In[20]:
+# In[11]:
 
 
 def MSE(y, Y):
@@ -243,7 +243,7 @@ def MSE(y, Y):
 # 
 # 运行这些单元测试，检查你的网络实现是否正确。这样可以帮助你确保网络已正确实现，然后再开始训练网络。这些测试必须成功才能通过此项目。
 
-# In[21]:
+# In[12]:
 
 
 import unittest
@@ -326,15 +326,15 @@ unittest.TextTestRunner().run(suite)
 # 
 # 隐藏节点越多，模型的预测结果就越准确。尝试不同的隐藏节点的数量，看看对性能有何影响。你可以查看损失字典，寻找网络性能指标。如果隐藏单元的数量太少，那么模型就没有足够的空间进行学习，如果太多，则学习方向就有太多的选择。选择隐藏单元数量的技巧在于找到合适的平衡点。
 
-# In[75]:
+# In[66]:
 
 
 import sys
 
 ### TODO:Set the hyperparameters here, you need to change the defalut to get a better solution ###
-iterations = 2000
-learning_rate = 0.5
-hidden_nodes = 10
+iterations = 4600
+learning_rate = 0.86
+hidden_nodes = 18
 output_nodes = 1
 
 N_i = train_features.shape[1]
@@ -358,7 +358,7 @@ for ii in range(iterations):
     losses['validation'].append(val_loss)
 
 
-# In[76]:
+# In[67]:
 
 
 plt.plot(losses['train'], label='Training loss')
@@ -371,7 +371,7 @@ _ = plt.ylim()
 # 
 # 使用测试数据看看网络对数据建模的效果如何。如果完全错了，请确保网络中的每步都正确实现。
 
-# In[77]:
+# In[68]:
 
 
 fig, ax = plt.subplots(figsize=(8,4))
@@ -397,5 +397,5 @@ _ = ax.set_xticklabels(dates[12::24], rotation=45)
 # > **注意**：你可以通过双击该单元编辑文本。如果想要预览文本，请按 Control + Enter
 # 
 # #### 请将你的答案填写在下方
-# 我认为模型对数据的预测效果整体看还可以。但从预测结果图看到，部分日期的预测值与实际值仍有比较大的偏差。
+# 我认为模型对数据的预测效果整体看还可以。但从预测结果图看到，月末几天的预测值与实际值偏差很大，怎么也调不下来。训练曲线与验证曲线已经拟合的很好了，怀疑是过拟合了，但尝试让降低训练损失与验证损失，预测效果依然改善不明显。
 # 
